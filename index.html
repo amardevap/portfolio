@@ -66,13 +66,6 @@ p{margin:0;font-weight:400}
   .row[data-cols="4"]{grid-template-columns:1fr 1fr}
 }
 
-/* edit controls */
-.tbtn{font:500 12px/1 var(--tfont);padding:7px 10px;border:0;border-radius:999px;background:rgba(17,17,17,.85);color:#fff;cursor:pointer}
-.tbtn:hover{background:var(--red)}
-.bar{display:none;position:absolute;left:6px;top:6px;z-index:3}
-body.editing .bar{display:flex}
-[data-edit][contenteditable="true"]{outline:1.5px dashed var(--red);outline-offset:4px;border-radius:4px;cursor:text}
-
 .outro{background:linear-gradient(var(--paper) 0%,#cdeef8 55%,var(--sea-mid) 100%);text-align:center;padding:clamp(64px,10vw,130px) 20px clamp(80px,10vw,140px)}
 .outro h2{font-size:clamp(2.2rem,6vw,4.2rem);margin-bottom:.25em}
 .outro p{max-width:34em;margin:0 auto}
@@ -90,16 +83,7 @@ body.editing .bar{display:flex}
 .lb-next{right:12px;top:50%;margin-top:-22px}
 .lb-count{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:#fff;font-size:.85rem;margin:0}
 
-/* edit panel */
-.edit-btn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;font:500 13px/1 var(--tfont);padding:12px 16px;border:0;border-radius:999px;background:var(--ink);color:#fff;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25)}
-.ed-panel{display:none;position:fixed;right:16px;bottom:70px;z-index:40;width:270px;max-height:65vh;overflow:auto;background:#fff;border-radius:14px;padding:16px;box-shadow:0 12px 36px rgba(0,0,0,.2);gap:10px;flex-direction:column;font-size:.85rem}
-.ed-panel .col{display:flex;flex-direction:column;gap:4px}
-.ed-panel .row2{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.ed-panel input[type="text"],.ed-panel select{font:inherit;padding:6px;border:1px solid #ccc;border-radius:6px;width:100%}
-.ed-panel button{font:500 .8rem/1 var(--tfont);padding:9px;border:1.5px solid var(--ink);border-radius:8px;background:#fff;cursor:pointer}
-.ed-panel .title{font-weight:700;margin-top:4px}
-.ed-panel .note{font-size:.75rem;color:var(--muted)}
-body.editing .ed-panel{display:flex}
+
 
 @media (prefers-reduced-motion:reduce){
   .rays,.fish{animation:none}
@@ -153,22 +137,7 @@ body.editing .ed-panel{display:flex}
   <p class="lb-count" id="lbC"></p>
 </div>
 
-<button id="editBtn" class="edit-btn" type="button">Edit page</button>
-<div class="ed-panel" aria-label="Page settings">
-  <p class="title">Typeface</p>
-  <label class="col">Typeface name
-    <input id="fname" type="text" value="Invulnerable BB">
-  </label>
-  <p class="note">Font files go in assets/fonts/ (regular and bold). The name must match the file's font name.</p>
-  <p class="title">Colour</p>
-  <label class="col">Text item
-    <select id="tsel"></select>
-  </label>
-  <label class="row2">Colour <input id="tcol" type="color"></label>
-  <label class="row2">Line colour <input id="accent" type="color"></label>
-  <button id="reset" type="button">Reset page</button>
-  <p class="note">Text and colour changes are saved in this browser only. Fit buttons show on each file in edit mode.</p>
-</div>
+
 
 <script src="assets/manifest.js"></script>
 <script>
@@ -190,7 +159,6 @@ const state = {
   fname: store.get('pf-fname', 'Invulnerable BB'),
   accent: store.get('pf-accent', '#d42a2a')
 };
-const isEditing = () => document.body.classList.contains('editing');
 
 /* orientation from each file's real size */
 function orientOf(it){ const r = it.w / it.h; return r > 1.02 ? 'landscape' : r < 0.98 ? 'portrait' : 'square'; }
@@ -232,15 +200,6 @@ function frame(it, sec, ratio, idx){
     f.classList.add('has');
     f.dataset.src = it.src;
     LIST.push({src: it.src, type: it.type});
-    const bar = document.createElement('div'); bar.className = 'bar';
-    const b = document.createElement('button'); b.type = 'button'; b.className = 'tbtn';
-    b.textContent = state.fit[it.src] === 'contain' ? 'Fill' : 'Fit';
-    b.onclick = e => {
-      e.stopPropagation();
-      state.fit[it.src] = state.fit[it.src] === 'contain' ? 'cover' : 'contain';
-      store.set('pf-fit', state.fit); render();
-    };
-    bar.appendChild(b); f.appendChild(bar);
   } else {
     if (sec === 'brand') f.classList.add(TONES[idx % TONES.length]);
     const p = document.createElement('div'); p.className = 'ph';
@@ -310,68 +269,30 @@ lb.addEventListener('touchend', e => {
   if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1);
 });
 document.getElementById('page').addEventListener('click', e => {
-  if (isEditing()) return;
   const f = e.target.closest('.item.has');
   if (f) openLight(f.dataset.src);
 });
 
 /* typeface name: applies to all text */
-const fname = document.getElementById('fname');
 function applyFontName(){
   const n = (state.fname || 'Invulnerable BB').replace(/"/g, '');
   document.documentElement.style.setProperty('--tfont', `"${n}","Trebuchet MS",system-ui,sans-serif`);
 }
-fname.value = state.fname;
-fname.oninput = () => { state.fname = fname.value; store.set('pf-fname', state.fname); applyFontName(); };
 
-/* editable text and colours: headings default red, text black */
+/* headings default red, text black */
 const TEXT = () => [...document.querySelectorAll('[data-edit]')];
-const tsel = document.getElementById('tsel'), tcol = document.getElementById('tcol'), accent = document.getElementById('accent');
 function getColor(k){ return state.color[k] || (k.startsWith('h-') ? '#d42a2a' : '#111111'); }
 function applyColors(){ TEXT().forEach(el => { el.style.color = getColor(el.dataset.edit); }); }
-function syncTcol(){ tcol.value = getColor(tsel.value); }
-function buildTsel(){
-  tsel.innerHTML = '';
-  TEXT().forEach(el => {
-    const o = document.createElement('option');
-    o.value = el.dataset.edit; o.textContent = el.textContent.trim().slice(0, 30);
-    tsel.appendChild(o);
-  });
-  syncTcol();
-}
-tsel.onchange = syncTcol;
-tcol.oninput = () => { state.color[tsel.value] = tcol.value; store.set('pf-color', state.color); applyColors(); };
-accent.value = state.accent;
-accent.oninput = () => { state.accent = accent.value; store.set('pf-accent', state.accent); document.documentElement.style.setProperty('--red', accent.value); };
 document.documentElement.style.setProperty('--red', state.accent);
 
-function updateMail(){ const m = document.getElementById('mail'); m.href = 'mailto:' + m.textContent.trim(); }
+function updateMail(){ const m = document.getElementById('mail'); if (m) m.href = 'mailto:' + m.textContent.trim(); }
 function applyText(){
   TEXT().forEach(el => {
     const k = el.dataset.edit;
     if (state.text[k] != null) el.textContent = state.text[k];
-    el.addEventListener('input', () => {
-      state.text[k] = el.textContent; store.set('pf-text', state.text);
-      if (k === 'mail') updateMail();
-    });
   });
   updateMail();
 }
-
-document.getElementById('reset').onclick = () => {
-  ['pf-fit', 'pf-text', 'pf-color', 'pf-fname', 'pf-accent'].forEach(k => { try { localStorage.removeItem(k); } catch(e) {} });
-  setTimeout(() => location.reload(), 300);
-};
-
-const edit = document.getElementById('editBtn');
-edit.onclick = () => {
-  const on = document.body.classList.toggle('editing');
-  TEXT().forEach(el => el.contentEditable = on ? 'true' : 'false');
-  edit.textContent = on ? 'Done' : 'Edit page';
-  if (on) buildTsel();
-  render();
-};
-document.getElementById('mail').addEventListener('click', e => { if (isEditing()) e.preventDefault(); });
 
 /* fish swim across the sea band at varied depths and speeds */
 let fishHTML = '';
