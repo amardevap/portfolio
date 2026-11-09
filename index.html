@@ -1,0 +1,511 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Amardev AP — Portfolio</title>
+<style>
+:root{
+  --red:#d42a2a;--ink:#111111;--muted:#5b6b73;--paper:#fff;
+  --sea-mid:#2b97c4;--sea-light:#8fdcf0;
+  --tfont:"Invulnerable BB","Trebuchet MS",system-ui,sans-serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--tfont);font-weight:400;color:var(--ink);background:var(--paper);line-height:1.6;-webkit-font-smoothing:antialiased}
+h2{font-weight:700;margin:0 0 .35em;letter-spacing:.01em;font-size:clamp(1.35rem,2.4vw,1.9rem)}
+p{margin:0;font-weight:400}
+.kicker{font-size:.95rem}
+
+/* hero: original intro, loops automatically */
+.hero{position:relative;background:var(--paper)}
+.hero video{display:block;width:100%;height:auto;pointer-events:none}
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:clamp(160px,16vw,320px);background:linear-gradient(rgba(143,220,240,0),rgba(143,220,240,.6) 55%,var(--paper));pointer-events:none}
+.hero-tools{display:none;position:absolute;left:12px;top:12px;z-index:5;gap:6px;flex-wrap:wrap}
+body.editing .hero-tools{display:flex}
+
+/* sea band */
+.sea{position:relative;overflow:hidden;background:var(--sea-mid) url("assets/sea.jpg") center top/cover no-repeat;padding:clamp(60px,9vw,140px) clamp(14px,4vw,56px)}
+.sea::before{content:"";position:absolute;left:0;right:0;top:0;height:220px;background:linear-gradient(var(--paper),rgba(255,255,255,0));z-index:0;pointer-events:none}
+.rays{position:absolute;inset:-10% -20% 0;z-index:0;pointer-events:none;background:repeating-linear-gradient(100deg,rgba(255,255,255,.22) 0 22px,rgba(255,255,255,0) 22px 96px);mix-blend-mode:screen;-webkit-mask-image:linear-gradient(#000,rgba(0,0,0,0) 85%);mask-image:linear-gradient(#000,rgba(0,0,0,0) 85%);animation:sway 10s ease-in-out infinite alternate}
+@keyframes sway{from{transform:translateX(-3%)}to{transform:translateX(3%)}}
+.fish-layer{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.fish{position:absolute;left:0;top:var(--y);width:calc(44px * var(--s));height:auto;color:rgba(11,61,92,.4);animation:swim var(--d) linear var(--dl) infinite}
+.fish path{fill:currentColor}
+.fish.rev{animation-name:swimr}
+@keyframes swim{from{transform:translateX(-12vw)}to{transform:translateX(112vw)}}
+@keyframes swimr{from{transform:translateX(112vw) scaleX(-1)}to{transform:translateX(-12vw) scaleX(-1)}}
+
+.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto}
+.panel{background:rgba(255,255,255,.94);border-radius:22px;padding:clamp(18px,3vw,36px);margin-bottom:clamp(28px,4vw,56px);box-shadow:0 20px 50px rgba(11,61,92,.18)}
+.head{border-bottom:2px solid var(--red);padding-bottom:12px;margin-bottom:22px}
+
+/* rows fill the full width with no gaps */
+.rows{display:flex;flex-direction:column;gap:clamp(14px,2vw,26px)}
+.rowwrap{display:flex;flex-direction:column;gap:6px}
+.row{display:grid;gap:clamp(8px,1.2vw,16px);align-items:start;grid-template-columns:repeat(var(--cols),1fr)}
+.item{position:relative;margin:0;overflow:hidden;border-radius:12px;background:#eef5f8}
+.item img,.item video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
+.item.has{cursor:pointer}
+.item .play{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:rgba(0,0,0,.55);pointer-events:none}
+.item .play::after{content:"";position:absolute;left:22px;top:17px;border-left:16px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent}
+.ph{position:absolute;inset:0;display:grid;place-items:center;padding:12px;text-align:center;font-size:.85rem;color:#587281;border:1.5px dashed #9bb8c6;border-radius:12px}
+.t-paper{background:#fff;box-shadow:inset 0 0 0 1px #e2e8ec}
+.t-red{background:var(--red)}
+.t-red .ph{color:#fff;border-color:rgba(255,255,255,.7)}
+.t-ink{background:#111}
+.t-ink .ph{color:#ddd;border-color:#666}
+.t-sea{background:var(--sea-light)}
+@media (max-width:760px){
+  .row{grid-template-columns:1fr}
+  .row[data-cols="4"]{grid-template-columns:1fr 1fr}
+}
+
+/* edit controls */
+.tbtn{font:500 12px/1 var(--tfont);padding:7px 10px;border:0;border-radius:999px;background:rgba(17,17,17,.85);color:#fff;cursor:pointer}
+.tbtn:hover{background:var(--red)}
+.bar,.rtools,.sec-tools{display:none;gap:4px;flex-wrap:wrap}
+.bar{position:absolute;left:6px;right:6px;top:6px;z-index:3}
+body.editing .bar{display:flex}
+body.editing .rtools{display:flex;justify-content:flex-end}
+body.editing .sec-tools{display:flex;margin-top:16px}
+[data-edit][contenteditable="true"]{outline:1.5px dashed var(--red);outline-offset:4px;border-radius:4px;cursor:text}
+
+.outro{background:linear-gradient(var(--paper) 0%,#cdeef8 55%,var(--sea-mid) 100%);text-align:center;padding:clamp(64px,10vw,130px) 20px clamp(80px,10vw,140px)}
+.outro h2{font-size:clamp(2.2rem,6vw,4.2rem);margin-bottom:.25em}
+.outro p{max-width:34em;margin:0 auto}
+.outro .mail{display:inline-block;margin-top:20px;font-weight:400;color:var(--ink);text-decoration:none;border-bottom:2px solid var(--red);padding-bottom:2px}
+
+/* full-screen viewer */
+.lb{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.94);display:flex;align-items:center;justify-content:center}
+.lb[hidden]{display:none}
+.lb-stage{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:56px 64px}
+.lb-stage video,.lb-stage img{max-width:100%;max-height:100%;object-fit:contain}
+.lb-btn{position:absolute;border:0;background:rgba(255,255,255,.14);color:#fff;cursor:pointer;border-radius:999px;font:700 22px/1 var(--tfont);width:44px;height:44px}
+.lb-btn:hover{background:var(--red)}
+.lb-x{top:14px;right:14px}
+.lb-prev{left:12px;top:50%;margin-top:-22px}
+.lb-next{right:12px;top:50%;margin-top:-22px}
+.lb-count{position:absolute;bottom:16px;left:0;right:0;text-align:center;color:#fff;font-size:.85rem;margin:0}
+
+/* edit panel */
+.edit-btn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:40;font:500 13px/1 var(--tfont);padding:12px 16px;border:0;border-radius:999px;background:var(--ink);color:#fff;cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.ed-panel{display:none;position:fixed;right:16px;bottom:70px;z-index:40;width:270px;max-height:65vh;overflow:auto;background:#fff;border-radius:14px;padding:16px;box-shadow:0 12px 36px rgba(0,0,0,.2);gap:10px;flex-direction:column;font-size:.85rem}
+.ed-panel .col{display:flex;flex-direction:column;gap:4px}
+.ed-panel .row2{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ed-panel input[type="text"],.ed-panel select{font:inherit;padding:6px;border:1px solid #ccc;border-radius:6px;width:100%}
+.ed-panel button{font:500 .8rem/1 var(--tfont);padding:9px;border:1.5px solid var(--ink);border-radius:8px;background:#fff;cursor:pointer}
+.ed-panel .title{font-weight:700;margin-top:4px}
+.ed-panel .note{font-size:.75rem;color:var(--muted)}
+body.editing .ed-panel{display:flex}
+
+@media (prefers-reduced-motion:reduce){
+  .rays,.fish{animation:none}
+  .fish{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="hero" aria-label="Intro">
+  <video id="hero" autoplay muted loop playsinline preload="auto" aria-label="Portfolio intro animation" src="assets/intro.mp4"></video>
+  <div class="hero-tools">
+    <button class="tbtn" id="heroUp" type="button">Replace intro</button>
+    <button class="tbtn" id="heroReset" type="button">Original intro</button>
+  </div>
+</header>
+
+<main id="page">
+<section class="sea" id="work">
+  <div class="rays" aria-hidden="true"></div>
+  <div class="fish-layer" id="fish" aria-hidden="true"></div>
+  <div class="wrap">
+
+    <div class="panel">
+      <div class="head"><h2 data-edit="h-motion">Motion Graphics</h2><p class="kicker" data-edit="k-motion">A collection of stories in motion</p></div>
+      <div class="rows" id="rows-motion"></div>
+      <div class="sec-tools" data-sec="motion"></div>
+    </div>
+
+    <div class="panel">
+      <div class="head"><h2 data-edit="h-design">Graphic Design</h2><p class="kicker" data-edit="k-design">Visual stories, bold composition and playful ideas</p></div>
+      <div class="rows" id="rows-design"></div>
+      <div class="sec-tools" data-sec="design"></div>
+    </div>
+
+    <div class="panel">
+      <div class="head"><h2 data-edit="h-brand">Branding Works</h2><p class="kicker" data-edit="k-brand">Identities crafted with character and purpose</p></div>
+      <div class="rows" id="rows-brand"></div>
+      <div class="sec-tools" data-sec="brand"></div>
+    </div>
+
+  </div>
+</section>
+
+<section class="outro" id="contact">
+  <p class="kicker" data-edit="k-journey">The journey continues</p>
+  <h2 data-edit="h-thanks">Thank you</h2>
+  <p data-edit="p-thanks">Every great adventure begins with an idea. Let's create the next one together.</p>
+  <a class="mail" id="mail" data-edit="mail" href="mailto:amardeval@gmail.com">amardeval@gmail.com</a>
+</section>
+</main>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Viewer">
+  <div class="lb-stage" id="lbStage"></div>
+  <button class="lb-btn lb-x" id="lbX" type="button" aria-label="Close">✕</button>
+  <button class="lb-btn lb-prev" id="lbP" type="button" aria-label="Previous">‹</button>
+  <button class="lb-btn lb-next" id="lbN" type="button" aria-label="Next">›</button>
+  <p class="lb-count" id="lbC"></p>
+</div>
+
+<button id="editBtn" class="edit-btn" type="button">Edit page</button>
+<div class="ed-panel" aria-label="Page settings">
+  <p class="title">Typeface</p>
+  <label class="col">Typeface name (paste here)
+    <input id="fname" type="text" value="Invulnerable BB">
+  </label>
+  <label class="col">Bold file, for headings
+    <input id="f700" type="file" accept=".ttf,.otf,.woff,.woff2">
+  </label>
+  <label class="col">Regular file, for text
+    <input id="f400" type="file" accept=".ttf,.otf,.woff,.woff2">
+  </label>
+  <p class="note" id="fstatus"></p>
+  <p class="title">Colour</p>
+  <label class="col">Text item
+    <select id="tsel"></select>
+  </label>
+  <label class="row2">Colour <input id="tcol" type="color"></label>
+  <label class="row2">Line colour <input id="accent" type="color"></label>
+  <button id="reset" type="button">Reset page</button>
+  <p class="note">Uploads, rows, colours and text are saved in this browser only. Headings default to red and text to black.</p>
+</div>
+
+<script>
+const DB = 'portfolio-edit';
+const PRESETS = {
+  portrait: {ratio:'9/16', cols:3, label:'Portrait row (1080×1920)'},
+  landscape:{ratio:'16/9', cols:2, label:'Landscape row (1920×1080)'},
+  square:   {ratio:'1/1',  cols:4, label:'Square row'},
+  poster:   {ratio:'3/4',  cols:4, label:'Poster row'}
+};
+const TONES = ['t-paper','t-red','t-ink','t-sea'];
+
+function mkRow(id, ratio, cols){ return {id, ratio, cols, frames: Array.from({length: cols}, (_, i) => ({id: id + '-' + i}))}; }
+const DEFAULT_ROWS = {
+  motion: [mkRow('m0','9/16',3), mkRow('m1','16/9',2), mkRow('m2','9/16',3), mkRow('m3','16/9',2)],
+  design: [mkRow('d0','9/16',4), mkRow('d1','3/4',4)],
+  brand:  [mkRow('b0','1/1',4)]
+};
+
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch(e) { return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} }
+};
+const state = {
+  rows: store.get('pf-rows', null) || JSON.parse(JSON.stringify(DEFAULT_ROWS)),
+  fit: store.get('pf-fit', {}),
+  text: store.get('pf-text', {}),
+  color: store.get('pf-color', {}),
+  fname: store.get('pf-fname', 'Invulnerable BB'),
+  accent: store.get('pf-accent', '#d42a2a'),
+  media: {}
+};
+const isEditing = () => document.body.classList.contains('editing');
+
+/* uploads, the intro and font files live in IndexedDB so they survive a reload in this browser */
+function openDB(){
+  return new Promise((res, rej) => {
+    const r = indexedDB.open(DB, 1);
+    r.onupgradeneeded = () => r.result.createObjectStore('media');
+    r.onsuccess = () => res(r.result);
+    r.onerror = () => rej(r.error);
+  });
+}
+async function dbWrite(fn){
+  const db = await openDB();
+  await new Promise((res, rej) => { const tx = db.transaction('media', 'readwrite'); fn(tx.objectStore('media')); tx.oncomplete = () => { db.close(); res(); }; tx.onerror = () => rej(tx.error); });
+}
+async function dbAll(){
+  const db = await openDB();
+  return new Promise((res, rej) => {
+    const out = {}; const tx = db.transaction('media');
+    const c = tx.objectStore('media').openCursor();
+    c.onsuccess = () => { const cur = c.result; if (cur) { out[cur.key] = cur.value; cur.continue(); } else { db.close(); res(out); } };
+    c.onerror = () => rej(c.error);
+  });
+}
+
+function btn(t, fn){ const b = document.createElement('button'); b.type = 'button'; b.className = 'tbtn'; b.textContent = t; b.onclick = e => { e.stopPropagation(); fn(); }; return b; }
+function saveRows(){ store.set('pf-rows', state.rows); }
+function pickFile(accept, cb){
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = accept;
+  inp.onchange = () => { if (inp.files[0]) cb(inp.files[0]); };
+  inp.click();
+}
+
+function frameEl(s, row, ri, fi){
+  const fr = row.frames[fi];
+  const f = document.createElement('figure');
+  f.className = 'item' + (s === 'brand' ? ' ' + TONES[fi % TONES.length] : '');
+  f.style.aspectRatio = row.ratio;
+  f.dataset.id = fr.id;
+  const m = state.media[fr.id];
+  if (m) {
+    const isV = (m.type || '').startsWith('video');
+    const el = document.createElement(isV ? 'video' : 'img');
+    el.src = m.url;
+    el.style.objectFit = state.fit[fr.id] || 'cover';
+    if (isV) { el.preload = 'metadata'; el.muted = true; el.playsInline = true; }
+    else el.alt = '';
+    f.appendChild(el);
+    if (isV) { const pl = document.createElement('span'); pl.className = 'play'; f.appendChild(pl); }
+    f.classList.add('has');
+  } else {
+    const p = document.createElement('div'); p.className = 'ph';
+    p.textContent = 'Empty frame · ' + row.ratio;
+    f.appendChild(p);
+  }
+  const bar = document.createElement('div'); bar.className = 'bar';
+  bar.append(
+    btn('Upload', () => pickFile('video/*,image/*', file => setMedia(fr.id, file))),
+    btn('←', () => moveFrame(s, ri, fi, -1)),
+    btn('→', () => moveFrame(s, ri, fi, 1)),
+    btn(state.fit[fr.id] === 'contain' ? 'Fill' : 'Fit', () => { state.fit[fr.id] = state.fit[fr.id] === 'contain' ? 'cover' : 'contain'; store.set('pf-fit', state.fit); render(); }),
+    btn('Clear', () => clearMedia(fr.id))
+  );
+  f.appendChild(bar);
+  return f;
+}
+
+function rowEl(s, row, ri){
+  const wrap = document.createElement('div'); wrap.className = 'rowwrap';
+  const tools = document.createElement('div'); tools.className = 'rtools';
+  tools.append(btn('Row ↑', () => moveRow(s, ri, -1)), btn('Row ↓', () => moveRow(s, ri, 1)), btn('Delete row', () => delRow(s, ri)));
+  const r = document.createElement('div'); r.className = 'row'; r.dataset.cols = row.cols;
+  r.style.setProperty('--cols', row.cols);
+  row.frames.forEach((_, fi) => r.appendChild(frameEl(s, row, ri, fi)));
+  wrap.append(tools, r);
+  return wrap;
+}
+
+function render(){
+  ['motion', 'design', 'brand'].forEach(s => {
+    const host = document.getElementById('rows-' + s);
+    host.innerHTML = '';
+    state.rows[s].forEach((row, ri) => host.appendChild(rowEl(s, row, ri)));
+    const tools = document.querySelector(`.sec-tools[data-sec="${s}"]`);
+    tools.innerHTML = '';
+    Object.keys(PRESETS).forEach(k => tools.appendChild(btn('+ ' + PRESETS[k].label, () => addRow(s, k))));
+  });
+}
+
+async function setMedia(id, blob){
+  if (state.media[id]) URL.revokeObjectURL(state.media[id].url);
+  state.media[id] = { url: URL.createObjectURL(blob), type: blob.type || '' };
+  render();
+  try { await dbWrite(st => st.put(blob, id)); } catch(e) {}
+}
+async function clearMedia(id){
+  if (state.media[id]) URL.revokeObjectURL(state.media[id].url);
+  delete state.media[id];
+  render();
+  try { await dbWrite(st => st.delete(id)); } catch(e) {}
+}
+function moveFrame(s, ri, fi, d){
+  const fr = state.rows[s][ri].frames; const j = fi + d;
+  if (j < 0 || j >= fr.length) return;
+  [fr[fi], fr[j]] = [fr[j], fr[fi]]; saveRows(); render();
+}
+function moveRow(s, ri, d){
+  const a = state.rows[s]; const j = ri + d;
+  if (j < 0 || j >= a.length) return;
+  [a[ri], a[j]] = [a[j], a[ri]]; saveRows(); render();
+}
+function addRow(s, kind){
+  const p = PRESETS[kind];
+  const id = 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
+  state.rows[s].push(mkRow(id, p.ratio, p.cols));
+  saveRows(); render();
+}
+async function delRow(s, ri){
+  const row = state.rows[s][ri];
+  row.frames.forEach(fr => { if (state.media[fr.id]) { URL.revokeObjectURL(state.media[fr.id].url); delete state.media[fr.id]; } });
+  try { await dbWrite(st => row.frames.forEach(fr => st.delete(fr.id))); } catch(e) {}
+  state.rows[s].splice(ri, 1); saveRows(); render();
+}
+
+/* full-screen viewer: tap a frame to open, previous and next move through the videos */
+const lb = document.getElementById('lb'), lbStage = document.getElementById('lbStage'), lbCount = document.getElementById('lbC');
+let lbIds = [], lbI = 0;
+function showLight(){
+  const m = state.media[lbIds[lbI]];
+  lbStage.innerHTML = '';
+  if (!m) return;
+  const isV = (m.type || '').startsWith('video');
+  const el = document.createElement(isV ? 'video' : 'img');
+  el.src = m.url;
+  if (isV) { el.controls = true; el.autoplay = true; el.playsInline = true; } else el.alt = '';
+  lbStage.appendChild(el);
+  lbCount.textContent = (lbI + 1) + ' / ' + lbIds.length;
+}
+function openLight(id){
+  lbIds = [...document.querySelectorAll('.item.has')].map(e => e.dataset.id);
+  lbI = lbIds.indexOf(id);
+  if (lbI < 0) return;
+  showLight(); lb.hidden = false; document.body.style.overflow = 'hidden';
+}
+function closeLight(){
+  lbStage.querySelectorAll('video').forEach(v => v.pause());
+  lbStage.innerHTML = ''; lb.hidden = true; document.body.style.overflow = '';
+}
+function step(d){ if (!lbIds.length) return; lbI = (lbI + d + lbIds.length) % lbIds.length; showLight(); }
+document.getElementById('lbX').onclick = closeLight;
+document.getElementById('lbP').onclick = () => step(-1);
+document.getElementById('lbN').onclick = () => step(1);
+lb.addEventListener('click', e => { if (e.target === lb || e.target === lbStage) closeLight(); });
+document.addEventListener('keydown', e => {
+  if (lb.hidden) return;
+  if (e.key === 'Escape') closeLight();
+  if (e.key === 'ArrowLeft') step(-1);
+  if (e.key === 'ArrowRight') step(1);
+});
+let tx0 = null;
+lb.addEventListener('touchstart', e => { tx0 = e.touches[0].clientX; }, {passive: true});
+lb.addEventListener('touchend', e => {
+  if (tx0 == null) return;
+  const dx = e.changedTouches[0].clientX - tx0; tx0 = null;
+  if (Math.abs(dx) > 50) step(dx < 0 ? 1 : -1);
+});
+document.getElementById('page').addEventListener('click', e => {
+  if (isEditing()) return;
+  const f = e.target.closest('.item.has');
+  if (f) openLight(f.dataset.id);
+});
+
+/* intro video: replace or restore */
+const hero = document.getElementById('hero');
+const heroDefault = hero.getAttribute('src');
+function setHero(src){ hero.src = src; hero.play().catch(() => {}); }
+document.getElementById('heroUp').onclick = () => pickFile('video/*', async f => {
+  setHero(URL.createObjectURL(f));
+  try { await dbWrite(st => st.put(f, 'hero')); } catch(e) {}
+});
+document.getElementById('heroReset').onclick = async () => {
+  setHero(heroDefault);
+  try { await dbWrite(st => st.delete('hero')); } catch(e) {}
+};
+
+/* typeface: a pasteable name, with optional Bold and Regular files for this browser */
+const fname = document.getElementById('fname'), fstatus = document.getElementById('fstatus');
+function applyFontName(){
+  const n = (state.fname || 'Invulnerable BB').replace(/"/g, '');
+  document.documentElement.style.setProperty('--tfont', `"${n}","Trebuchet MS",system-ui,sans-serif`);
+}
+async function addFace(blob, w){
+  const ff = new FontFace(state.fname.replace(/"/g, ''), await blob.arrayBuffer(), {weight: String(w)});
+  await ff.load(); document.fonts.add(ff);
+}
+async function refaces(){
+  try {
+    const all = await dbAll();
+    for (const w of ['400', '700']) if (all['font-' + w]) await addFace(all['font-' + w], w);
+  } catch(e) { fstatus.textContent = 'Could not load the saved font file.'; }
+}
+async function saveFace(file, w){
+  fstatus.textContent = 'Loading…';
+  try {
+    await addFace(file, w);
+    await dbWrite(st => st.put(file, 'font-' + w));
+    applyFontName();
+    fstatus.textContent = (w === '700' ? 'Bold' : 'Regular') + ' file saved.';
+  } catch(e) { fstatus.textContent = 'This file could not be loaded. Try a .ttf, .otf, .woff or .woff2 file.'; }
+}
+fname.value = state.fname;
+fname.oninput = () => { state.fname = fname.value; store.set('pf-fname', state.fname); applyFontName(); };
+fname.onchange = () => { refaces(); };
+document.getElementById('f700').onchange = e => { if (e.target.files[0]) saveFace(e.target.files[0], '700'); };
+document.getElementById('f400').onchange = e => { if (e.target.files[0]) saveFace(e.target.files[0], '400'); };
+
+/* editable text and colours: headings default red, text black, each item can be changed */
+const TEXT = () => [...document.querySelectorAll('[data-edit]')];
+const tsel = document.getElementById('tsel'), tcol = document.getElementById('tcol'), accent = document.getElementById('accent');
+function getColor(k){ return state.color[k] || (k.startsWith('h-') ? '#d42a2a' : '#111111'); }
+function applyColors(){ TEXT().forEach(el => { el.style.color = getColor(el.dataset.edit); }); }
+function buildTsel(){
+  tsel.innerHTML = '';
+  TEXT().forEach(el => {
+    const o = document.createElement('option');
+    o.value = el.dataset.edit; o.textContent = el.textContent.trim().slice(0, 30);
+    tsel.appendChild(o);
+  });
+  syncTcol();
+}
+function syncTcol(){ tcol.value = getColor(tsel.value); }
+tsel.onchange = syncTcol;
+tcol.oninput = () => { state.color[tsel.value] = tcol.value; store.set('pf-color', state.color); applyColors(); };
+accent.value = state.accent;
+accent.oninput = () => { state.accent = accent.value; store.set('pf-accent', state.accent); document.documentElement.style.setProperty('--red', accent.value); };
+document.documentElement.style.setProperty('--red', state.accent);
+
+function updateMail(){ const m = document.getElementById('mail'); m.href = 'mailto:' + m.textContent.trim(); }
+function applyText(){
+  TEXT().forEach(el => {
+    const k = el.dataset.edit;
+    if (state.text[k] != null) el.textContent = state.text[k];
+    el.addEventListener('input', () => {
+      state.text[k] = el.textContent; store.set('pf-text', state.text);
+      if (k === 'mail') updateMail();
+    });
+  });
+  updateMail();
+}
+
+document.getElementById('reset').onclick = () => {
+  ['pf-rows', 'pf-fit', 'pf-text', 'pf-color', 'pf-fname', 'pf-accent'].forEach(k => { try { localStorage.removeItem(k); } catch(e) {} });
+  try { indexedDB.deleteDatabase(DB); } catch(e) {}
+  setTimeout(() => location.reload(), 300);
+};
+
+const edit = document.getElementById('editBtn');
+edit.onclick = () => {
+  const on = document.body.classList.toggle('editing');
+  TEXT().forEach(el => el.contentEditable = on ? 'true' : 'false');
+  edit.textContent = on ? 'Done' : 'Edit page';
+  if (on) buildTsel();
+};
+document.getElementById('mail').addEventListener('click', e => { if (isEditing()) e.preventDefault(); });
+
+/* fish swim across the sea band at varied depths and speeds */
+let fishHTML = '';
+for (let i = 0; i < 8; i++) {
+  const y = (6 + i * 11.5 + Math.random() * 6).toFixed(1);
+  const d = (18 + Math.random() * 12).toFixed(1);
+  const dl = (-Math.random() * 22).toFixed(1);
+  const s = (0.55 + Math.random() * 0.8).toFixed(2);
+  fishHTML += `<svg class="fish${i % 2 ? ' rev' : ''}" style="--y:${y}%;--d:${d}s;--dl:${dl}s;--s:${s}" viewBox="0 0 60 30"><path d="M4 15C16 4 38 4 50 15C38 26 16 26 4 15ZM48 15L59 5V25Z"/></svg>`;
+}
+document.getElementById('fish').innerHTML = fishHTML;
+
+/* start up: typeface, text, colours and rows, then saved uploads from this browser */
+applyFontName();
+applyText();
+applyColors();
+render();
+(async () => {
+  try {
+    const all = await dbAll();
+    for (const [k, b] of Object.entries(all)) {
+      if (k === 'hero') setHero(URL.createObjectURL(b));
+      else if (!k.startsWith('font-')) state.media[k] = { url: URL.createObjectURL(b), type: b.type || '' };
+    }
+    render();
+  } catch(e) {}
+  refaces();
+})();
+</script>
+</body>
+</html>
