@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Amardev AP — Portfolio</title>
 <style>
+/* Typeface: put the licensed files in assets/fonts/ as regular.woff2 (or .woff, .otf, .ttf) and bold.* */
+@font-face{font-family:"Invulnerable BB";font-weight:400;font-style:normal;font-display:swap;
+  src:url("assets/fonts/regular.woff2") format("woff2"),url("assets/fonts/regular.woff") format("woff"),url("assets/fonts/regular.otf") format("opentype"),url("assets/fonts/regular.ttf") format("truetype")}
+@font-face{font-family:"Invulnerable BB";font-weight:700;font-style:normal;font-display:swap;
+  src:url("assets/fonts/bold.woff2") format("woff2"),url("assets/fonts/bold.woff") format("woff"),url("assets/fonts/bold.otf") format("opentype"),url("assets/fonts/bold.ttf") format("truetype")}
+
 :root{
   --red:#d42a2a;--ink:#111111;--muted:#5b6b73;--paper:#fff;
   --sea-mid:#2b97c4;--sea-light:#8fdcf0;
@@ -23,8 +29,6 @@ p{margin:0;font-weight:400}
 .hero{position:relative;background:var(--paper)}
 .hero video{display:block;width:100%;height:auto;pointer-events:none}
 .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:clamp(160px,16vw,320px);background:linear-gradient(rgba(143,220,240,0),rgba(143,220,240,.6) 55%,var(--paper));pointer-events:none}
-.hero-tools{display:none;position:absolute;left:12px;top:12px;z-index:5;gap:6px;flex-wrap:wrap}
-body.editing .hero-tools{display:flex}
 
 /* sea band */
 .sea{position:relative;overflow:hidden;background:var(--sea-mid) url("assets/sea.jpg") center top/cover no-repeat;padding:clamp(60px,9vw,140px) clamp(14px,4vw,56px)}
@@ -44,7 +48,6 @@ body.editing .hero-tools{display:flex}
 
 /* rows fill the full width with no gaps */
 .rows{display:flex;flex-direction:column;gap:clamp(14px,2vw,26px)}
-.rowwrap{display:flex;flex-direction:column;gap:6px}
 .row{display:grid;gap:clamp(8px,1.2vw,16px);align-items:start;grid-template-columns:repeat(var(--cols),1fr)}
 .item{position:relative;margin:0;overflow:hidden;border-radius:12px;background:#eef5f8}
 .item img,.item video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;pointer-events:none}
@@ -66,11 +69,8 @@ body.editing .hero-tools{display:flex}
 /* edit controls */
 .tbtn{font:500 12px/1 var(--tfont);padding:7px 10px;border:0;border-radius:999px;background:rgba(17,17,17,.85);color:#fff;cursor:pointer}
 .tbtn:hover{background:var(--red)}
-.bar,.rtools,.sec-tools{display:none;gap:4px;flex-wrap:wrap}
-.bar{position:absolute;left:6px;right:6px;top:6px;z-index:3}
+.bar{display:none;position:absolute;left:6px;top:6px;z-index:3}
 body.editing .bar{display:flex}
-body.editing .rtools{display:flex;justify-content:flex-end}
-body.editing .sec-tools{display:flex;margin-top:16px}
 [data-edit][contenteditable="true"]{outline:1.5px dashed var(--red);outline-offset:4px;border-radius:4px;cursor:text}
 
 .outro{background:linear-gradient(var(--paper) 0%,#cdeef8 55%,var(--sea-mid) 100%);text-align:center;padding:clamp(64px,10vw,130px) 20px clamp(80px,10vw,140px)}
@@ -110,11 +110,7 @@ body.editing .ed-panel{display:flex}
 <body>
 
 <header class="hero" aria-label="Intro">
-  <video id="hero" autoplay muted loop playsinline preload="auto" aria-label="Portfolio intro animation" src="assets/intro.mp4"></video>
-  <div class="hero-tools">
-    <button class="tbtn" id="heroUp" type="button">Replace intro</button>
-    <button class="tbtn" id="heroReset" type="button">Original intro</button>
-  </div>
+  <video autoplay muted loop playsinline preload="auto" aria-label="Portfolio intro animation" src="assets/intro.mp4"></video>
 </header>
 
 <main id="page">
@@ -126,19 +122,16 @@ body.editing .ed-panel{display:flex}
     <div class="panel">
       <div class="head"><h2 data-edit="h-motion">Motion Graphics</h2><p class="kicker" data-edit="k-motion">A collection of stories in motion</p></div>
       <div class="rows" id="rows-motion"></div>
-      <div class="sec-tools" data-sec="motion"></div>
     </div>
 
     <div class="panel">
       <div class="head"><h2 data-edit="h-design">Graphic Design</h2><p class="kicker" data-edit="k-design">Visual stories, bold composition and playful ideas</p></div>
       <div class="rows" id="rows-design"></div>
-      <div class="sec-tools" data-sec="design"></div>
     </div>
 
     <div class="panel">
       <div class="head"><h2 data-edit="h-brand">Branding Works</h2><p class="kicker" data-edit="k-brand">Identities crafted with character and purpose</p></div>
       <div class="rows" id="rows-brand"></div>
-      <div class="sec-tools" data-sec="brand"></div>
     </div>
 
   </div>
@@ -163,16 +156,10 @@ body.editing .ed-panel{display:flex}
 <button id="editBtn" class="edit-btn" type="button">Edit page</button>
 <div class="ed-panel" aria-label="Page settings">
   <p class="title">Typeface</p>
-  <label class="col">Typeface name (paste here)
+  <label class="col">Typeface name
     <input id="fname" type="text" value="Invulnerable BB">
   </label>
-  <label class="col">Bold file, for headings
-    <input id="f700" type="file" accept=".ttf,.otf,.woff,.woff2">
-  </label>
-  <label class="col">Regular file, for text
-    <input id="f400" type="file" accept=".ttf,.otf,.woff,.woff2">
-  </label>
-  <p class="note" id="fstatus"></p>
+  <p class="note">Font files go in assets/fonts/ (regular and bold). The name must match the file's font name.</p>
   <p class="title">Colour</p>
   <label class="col">Text item
     <select id="tsel"></select>
@@ -180,181 +167,123 @@ body.editing .ed-panel{display:flex}
   <label class="row2">Colour <input id="tcol" type="color"></label>
   <label class="row2">Line colour <input id="accent" type="color"></label>
   <button id="reset" type="button">Reset page</button>
-  <p class="note">Uploads, rows, colours and text are saved in this browser only. Headings default to red and text to black.</p>
+  <p class="note">Text and colour changes are saved in this browser only. Fit buttons show on each file in edit mode.</p>
 </div>
 
+<script src="assets/manifest.js"></script>
 <script>
-const DB = 'portfolio-edit';
-const PRESETS = {
-  portrait: {ratio:'9/16', cols:3, label:'Portrait row (1080×1920)'},
-  landscape:{ratio:'16/9', cols:2, label:'Landscape row (1920×1080)'},
-  square:   {ratio:'1/1',  cols:4, label:'Square row'},
-  poster:   {ratio:'3/4',  cols:4, label:'Poster row'}
-};
-const TONES = ['t-paper','t-red','t-ink','t-sea'];
-
-function mkRow(id, ratio, cols){ return {id, ratio, cols, frames: Array.from({length: cols}, (_, i) => ({id: id + '-' + i}))}; }
-const DEFAULT_ROWS = {
-  motion: [mkRow('m0','9/16',3), mkRow('m1','16/9',2), mkRow('m2','9/16',3), mkRow('m3','16/9',2)],
-  design: [mkRow('d0','9/16',4), mkRow('d1','3/4',4)],
-  brand:  [mkRow('b0','1/1',4)]
-};
+const SECS = ['motion', 'design', 'brand'];
+const CAP = {portrait: 3, landscape: 2, square: 4};
+const RATIO_WH = {portrait: [9, 16], landscape: [16, 9], square: [1, 1]};
+const PLACEHOLDER = {motion: [['portrait', 3], ['landscape', 2]], design: [['portrait', 4]], brand: [['square', 4]]};
+const TONES = ['t-paper', 't-red', 't-ink', 't-sea'];
+const MANIFEST = window.PORTFOLIO_MANIFEST || {};
 
 const store = {
   get(k, d){ try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch(e) { return d; } },
   set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e) {} }
 };
 const state = {
-  rows: store.get('pf-rows', null) || JSON.parse(JSON.stringify(DEFAULT_ROWS)),
   fit: store.get('pf-fit', {}),
   text: store.get('pf-text', {}),
   color: store.get('pf-color', {}),
   fname: store.get('pf-fname', 'Invulnerable BB'),
-  accent: store.get('pf-accent', '#d42a2a'),
-  media: {}
+  accent: store.get('pf-accent', '#d42a2a')
 };
 const isEditing = () => document.body.classList.contains('editing');
 
-/* uploads, the intro and font files live in IndexedDB so they survive a reload in this browser */
-function openDB(){
-  return new Promise((res, rej) => {
-    const r = indexedDB.open(DB, 1);
-    r.onupgradeneeded = () => r.result.createObjectStore('media');
-    r.onsuccess = () => res(r.result);
-    r.onerror = () => rej(r.error);
-  });
-}
-async function dbWrite(fn){
-  const db = await openDB();
-  await new Promise((res, rej) => { const tx = db.transaction('media', 'readwrite'); fn(tx.objectStore('media')); tx.oncomplete = () => { db.close(); res(); }; tx.onerror = () => rej(tx.error); });
-}
-async function dbAll(){
-  const db = await openDB();
-  return new Promise((res, rej) => {
-    const out = {}; const tx = db.transaction('media');
-    const c = tx.objectStore('media').openCursor();
-    c.onsuccess = () => { const cur = c.result; if (cur) { out[cur.key] = cur.value; cur.continue(); } else { db.close(); res(out); } };
-    c.onerror = () => rej(c.error);
-  });
+/* orientation from each file's real size */
+function orientOf(it){ const r = it.w / it.h; return r > 1.02 ? 'landscape' : r < 0.98 ? 'portrait' : 'square'; }
+
+/* group files into rows: same orientation together, up to 3 portrait, 2 landscape or 4 square per row */
+function buildRows(sec){
+  const items = (MANIFEST[sec] || []).filter(it => it.w && it.h);
+  if (!items.length) {
+    return PLACEHOLDER[sec].map(([o, n]) => ({
+      items: Array.from({length: n}, () => ({src: null, w: RATIO_WH[o][0], h: RATIO_WH[o][1], o}))
+    }));
+  }
+  /* group by shape (portrait, then landscape, then square), keeping file-name order inside each group */
+  const RANK = {portrait: 0, landscape: 1, square: 2};
+  const tagged = items.map((it, i) => ({...it, o: orientOf(it), i}));
+  tagged.sort((a, b) => RANK[a.o] - RANK[b.o] || a.i - b.i);
+  const rows = []; let cur = null;
+  for (const it of tagged) {
+    if (!cur || cur.o !== it.o || cur.items.length >= CAP[it.o]) { cur = {o: it.o, items: []}; rows.push(cur); }
+    cur.items.push(it);
+  }
+  return rows;
 }
 
-function btn(t, fn){ const b = document.createElement('button'); b.type = 'button'; b.className = 'tbtn'; b.textContent = t; b.onclick = e => { e.stopPropagation(); fn(); }; return b; }
-function saveRows(){ store.set('pf-rows', state.rows); }
-function pickFile(accept, cb){
-  const inp = document.createElement('input');
-  inp.type = 'file'; inp.accept = accept;
-  inp.onchange = () => { if (inp.files[0]) cb(inp.files[0]); };
-  inp.click();
-}
-
-function frameEl(s, row, ri, fi){
-  const fr = row.frames[fi];
+const LIST = [];
+function frame(it, sec, ratio, idx){
   const f = document.createElement('figure');
-  f.className = 'item' + (s === 'brand' ? ' ' + TONES[fi % TONES.length] : '');
-  f.style.aspectRatio = row.ratio;
-  f.dataset.id = fr.id;
-  const m = state.media[fr.id];
-  if (m) {
-    const isV = (m.type || '').startsWith('video');
+  f.className = 'item';
+  f.style.aspectRatio = ratio;
+  if (it.src) {
+    const isV = it.type === 'video';
     const el = document.createElement(isV ? 'video' : 'img');
-    el.src = m.url;
-    el.style.objectFit = state.fit[fr.id] || 'cover';
+    el.src = it.src;
+    el.style.objectFit = state.fit[it.src] || 'cover';
     if (isV) { el.preload = 'metadata'; el.muted = true; el.playsInline = true; }
-    else el.alt = '';
+    else { el.alt = ''; el.loading = 'lazy'; }
     f.appendChild(el);
     if (isV) { const pl = document.createElement('span'); pl.className = 'play'; f.appendChild(pl); }
     f.classList.add('has');
+    f.dataset.src = it.src;
+    LIST.push({src: it.src, type: it.type});
+    const bar = document.createElement('div'); bar.className = 'bar';
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'tbtn';
+    b.textContent = state.fit[it.src] === 'contain' ? 'Fill' : 'Fit';
+    b.onclick = e => {
+      e.stopPropagation();
+      state.fit[it.src] = state.fit[it.src] === 'contain' ? 'cover' : 'contain';
+      store.set('pf-fit', state.fit); render();
+    };
+    bar.appendChild(b); f.appendChild(bar);
   } else {
+    if (sec === 'brand') f.classList.add(TONES[idx % TONES.length]);
     const p = document.createElement('div'); p.className = 'ph';
-    p.textContent = 'Empty frame · ' + row.ratio;
+    p.textContent = 'Empty frame · ' + it.o;
     f.appendChild(p);
   }
-  const bar = document.createElement('div'); bar.className = 'bar';
-  bar.append(
-    btn('Upload', () => pickFile('video/*,image/*', file => setMedia(fr.id, file))),
-    btn('←', () => moveFrame(s, ri, fi, -1)),
-    btn('→', () => moveFrame(s, ri, fi, 1)),
-    btn(state.fit[fr.id] === 'contain' ? 'Fill' : 'Fit', () => { state.fit[fr.id] = state.fit[fr.id] === 'contain' ? 'cover' : 'contain'; store.set('pf-fit', state.fit); render(); }),
-    btn('Clear', () => clearMedia(fr.id))
-  );
-  f.appendChild(bar);
   return f;
 }
 
-function rowEl(s, row, ri){
-  const wrap = document.createElement('div'); wrap.className = 'rowwrap';
-  const tools = document.createElement('div'); tools.className = 'rtools';
-  tools.append(btn('Row ↑', () => moveRow(s, ri, -1)), btn('Row ↓', () => moveRow(s, ri, 1)), btn('Delete row', () => delRow(s, ri)));
-  const r = document.createElement('div'); r.className = 'row'; r.dataset.cols = row.cols;
-  r.style.setProperty('--cols', row.cols);
-  row.frames.forEach((_, fi) => r.appendChild(frameEl(s, row, ri, fi)));
-  wrap.append(tools, r);
-  return wrap;
-}
-
 function render(){
-  ['motion', 'design', 'brand'].forEach(s => {
-    const host = document.getElementById('rows-' + s);
+  LIST.length = 0;
+  SECS.forEach(sec => {
+    const host = document.getElementById('rows-' + sec);
     host.innerHTML = '';
-    state.rows[s].forEach((row, ri) => host.appendChild(rowEl(s, row, ri)));
-    const tools = document.querySelector(`.sec-tools[data-sec="${s}"]`);
-    tools.innerHTML = '';
-    Object.keys(PRESETS).forEach(k => tools.appendChild(btn('+ ' + PRESETS[k].label, () => addRow(s, k))));
+    let idx = 0;
+    buildRows(sec).forEach(row => {
+      const wrap = document.createElement('div');
+      wrap.className = 'row';
+      wrap.dataset.cols = row.items.length;
+      wrap.style.setProperty('--cols', row.items.length);
+      const first = row.items[0];
+      const ratio = `${first.w} / ${first.h}`;
+      row.items.forEach(it => wrap.appendChild(frame(it, sec, ratio, idx++)));
+      host.appendChild(wrap);
+    });
   });
 }
 
-async function setMedia(id, blob){
-  if (state.media[id]) URL.revokeObjectURL(state.media[id].url);
-  state.media[id] = { url: URL.createObjectURL(blob), type: blob.type || '' };
-  render();
-  try { await dbWrite(st => st.put(blob, id)); } catch(e) {}
-}
-async function clearMedia(id){
-  if (state.media[id]) URL.revokeObjectURL(state.media[id].url);
-  delete state.media[id];
-  render();
-  try { await dbWrite(st => st.delete(id)); } catch(e) {}
-}
-function moveFrame(s, ri, fi, d){
-  const fr = state.rows[s][ri].frames; const j = fi + d;
-  if (j < 0 || j >= fr.length) return;
-  [fr[fi], fr[j]] = [fr[j], fr[fi]]; saveRows(); render();
-}
-function moveRow(s, ri, d){
-  const a = state.rows[s]; const j = ri + d;
-  if (j < 0 || j >= a.length) return;
-  [a[ri], a[j]] = [a[j], a[ri]]; saveRows(); render();
-}
-function addRow(s, kind){
-  const p = PRESETS[kind];
-  const id = 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5);
-  state.rows[s].push(mkRow(id, p.ratio, p.cols));
-  saveRows(); render();
-}
-async function delRow(s, ri){
-  const row = state.rows[s][ri];
-  row.frames.forEach(fr => { if (state.media[fr.id]) { URL.revokeObjectURL(state.media[fr.id].url); delete state.media[fr.id]; } });
-  try { await dbWrite(st => row.frames.forEach(fr => st.delete(fr.id))); } catch(e) {}
-  state.rows[s].splice(ri, 1); saveRows(); render();
-}
-
-/* full-screen viewer: tap a frame to open, previous and next move through the videos */
+/* full-screen viewer: tap a file to open, previous and next move through them */
 const lb = document.getElementById('lb'), lbStage = document.getElementById('lbStage'), lbCount = document.getElementById('lbC');
-let lbIds = [], lbI = 0;
+let lbI = 0;
 function showLight(){
-  const m = state.media[lbIds[lbI]];
+  const m = LIST[lbI];
   lbStage.innerHTML = '';
   if (!m) return;
-  const isV = (m.type || '').startsWith('video');
-  const el = document.createElement(isV ? 'video' : 'img');
-  el.src = m.url;
-  if (isV) { el.controls = true; el.autoplay = true; el.playsInline = true; } else el.alt = '';
+  const el = document.createElement(m.type === 'video' ? 'video' : 'img');
+  el.src = m.src;
+  if (m.type === 'video') { el.controls = true; el.autoplay = true; el.playsInline = true; } else el.alt = '';
   lbStage.appendChild(el);
-  lbCount.textContent = (lbI + 1) + ' / ' + lbIds.length;
+  lbCount.textContent = (lbI + 1) + ' / ' + LIST.length;
 }
-function openLight(id){
-  lbIds = [...document.querySelectorAll('.item.has')].map(e => e.dataset.id);
-  lbI = lbIds.indexOf(id);
+function openLight(src){
+  lbI = LIST.findIndex(x => x.src === src);
   if (lbI < 0) return;
   showLight(); lb.hidden = false; document.body.style.overflow = 'hidden';
 }
@@ -362,7 +291,7 @@ function closeLight(){
   lbStage.querySelectorAll('video').forEach(v => v.pause());
   lbStage.innerHTML = ''; lb.hidden = true; document.body.style.overflow = '';
 }
-function step(d){ if (!lbIds.length) return; lbI = (lbI + d + lbIds.length) % lbIds.length; showLight(); }
+function step(d){ if (!LIST.length) return; lbI = (lbI + d + LIST.length) % LIST.length; showLight(); }
 document.getElementById('lbX').onclick = closeLight;
 document.getElementById('lbP').onclick = () => step(-1);
 document.getElementById('lbN').onclick = () => step(1);
@@ -383,58 +312,24 @@ lb.addEventListener('touchend', e => {
 document.getElementById('page').addEventListener('click', e => {
   if (isEditing()) return;
   const f = e.target.closest('.item.has');
-  if (f) openLight(f.dataset.id);
+  if (f) openLight(f.dataset.src);
 });
 
-/* intro video: replace or restore */
-const hero = document.getElementById('hero');
-const heroDefault = hero.getAttribute('src');
-function setHero(src){ hero.src = src; hero.play().catch(() => {}); }
-document.getElementById('heroUp').onclick = () => pickFile('video/*', async f => {
-  setHero(URL.createObjectURL(f));
-  try { await dbWrite(st => st.put(f, 'hero')); } catch(e) {}
-});
-document.getElementById('heroReset').onclick = async () => {
-  setHero(heroDefault);
-  try { await dbWrite(st => st.delete('hero')); } catch(e) {}
-};
-
-/* typeface: a pasteable name, with optional Bold and Regular files for this browser */
-const fname = document.getElementById('fname'), fstatus = document.getElementById('fstatus');
+/* typeface name: applies to all text */
+const fname = document.getElementById('fname');
 function applyFontName(){
   const n = (state.fname || 'Invulnerable BB').replace(/"/g, '');
   document.documentElement.style.setProperty('--tfont', `"${n}","Trebuchet MS",system-ui,sans-serif`);
 }
-async function addFace(blob, w){
-  const ff = new FontFace(state.fname.replace(/"/g, ''), await blob.arrayBuffer(), {weight: String(w)});
-  await ff.load(); document.fonts.add(ff);
-}
-async function refaces(){
-  try {
-    const all = await dbAll();
-    for (const w of ['400', '700']) if (all['font-' + w]) await addFace(all['font-' + w], w);
-  } catch(e) { fstatus.textContent = 'Could not load the saved font file.'; }
-}
-async function saveFace(file, w){
-  fstatus.textContent = 'Loading…';
-  try {
-    await addFace(file, w);
-    await dbWrite(st => st.put(file, 'font-' + w));
-    applyFontName();
-    fstatus.textContent = (w === '700' ? 'Bold' : 'Regular') + ' file saved.';
-  } catch(e) { fstatus.textContent = 'This file could not be loaded. Try a .ttf, .otf, .woff or .woff2 file.'; }
-}
 fname.value = state.fname;
 fname.oninput = () => { state.fname = fname.value; store.set('pf-fname', state.fname); applyFontName(); };
-fname.onchange = () => { refaces(); };
-document.getElementById('f700').onchange = e => { if (e.target.files[0]) saveFace(e.target.files[0], '700'); };
-document.getElementById('f400').onchange = e => { if (e.target.files[0]) saveFace(e.target.files[0], '400'); };
 
-/* editable text and colours: headings default red, text black, each item can be changed */
+/* editable text and colours: headings default red, text black */
 const TEXT = () => [...document.querySelectorAll('[data-edit]')];
 const tsel = document.getElementById('tsel'), tcol = document.getElementById('tcol'), accent = document.getElementById('accent');
 function getColor(k){ return state.color[k] || (k.startsWith('h-') ? '#d42a2a' : '#111111'); }
 function applyColors(){ TEXT().forEach(el => { el.style.color = getColor(el.dataset.edit); }); }
+function syncTcol(){ tcol.value = getColor(tsel.value); }
 function buildTsel(){
   tsel.innerHTML = '';
   TEXT().forEach(el => {
@@ -444,7 +339,6 @@ function buildTsel(){
   });
   syncTcol();
 }
-function syncTcol(){ tcol.value = getColor(tsel.value); }
 tsel.onchange = syncTcol;
 tcol.oninput = () => { state.color[tsel.value] = tcol.value; store.set('pf-color', state.color); applyColors(); };
 accent.value = state.accent;
@@ -465,8 +359,7 @@ function applyText(){
 }
 
 document.getElementById('reset').onclick = () => {
-  ['pf-rows', 'pf-fit', 'pf-text', 'pf-color', 'pf-fname', 'pf-accent'].forEach(k => { try { localStorage.removeItem(k); } catch(e) {} });
-  try { indexedDB.deleteDatabase(DB); } catch(e) {}
+  ['pf-fit', 'pf-text', 'pf-color', 'pf-fname', 'pf-accent'].forEach(k => { try { localStorage.removeItem(k); } catch(e) {} });
   setTimeout(() => location.reload(), 300);
 };
 
@@ -476,6 +369,7 @@ edit.onclick = () => {
   TEXT().forEach(el => el.contentEditable = on ? 'true' : 'false');
   edit.textContent = on ? 'Done' : 'Edit page';
   if (on) buildTsel();
+  render();
 };
 document.getElementById('mail').addEventListener('click', e => { if (isEditing()) e.preventDefault(); });
 
@@ -490,22 +384,11 @@ for (let i = 0; i < 8; i++) {
 }
 document.getElementById('fish').innerHTML = fishHTML;
 
-/* start up: typeface, text, colours and rows, then saved uploads from this browser */
+/* start up */
 applyFontName();
 applyText();
 applyColors();
 render();
-(async () => {
-  try {
-    const all = await dbAll();
-    for (const [k, b] of Object.entries(all)) {
-      if (k === 'hero') setHero(URL.createObjectURL(b));
-      else if (!k.startsWith('font-')) state.media[k] = { url: URL.createObjectURL(b), type: b.type || '' };
-    }
-    render();
-  } catch(e) {}
-  refaces();
-})();
 </script>
 </body>
 </html>
