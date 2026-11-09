@@ -93,114 +93,6 @@ window.PORTFOLIO_MANIFEST = {
    "h": 1920
   },
   {
-   "src": "assets/design/Artboard%201%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%202%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%203%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%204%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%205%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%206%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%207%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%208%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%209%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%2010%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%2011%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%2012%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%2013%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%2014%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%2015%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%2016%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%2017%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
-   "src": "assets/design/Artboard%2018%404x-100.jpg",
-   "type": "image",
-   "w": 2000,
-   "h": 1674
-  },
-  {
    "src": "assets/design/BAG%20POSTER.jpg",
    "type": "image",
    "w": 1080,
@@ -333,5 +225,114 @@ window.PORTFOLIO_MANIFEST = {
    "h": 1440
   }
  ],
- "brand": []
+ "brand": [
+  {
+   "src": "assets/brand/Artboard%201%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%202%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%203%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%204%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%205%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%206%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%207%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%208%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%209%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%2010%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%2011%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%2012%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%2013%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%2014%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%2015%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%2016%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%2017%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  },
+  {
+   "src": "assets/brand/Artboard%2018%404x-100.jpg",
+   "type": "image",
+   "w": 2000,
+   "h": 1674
+  }
+ ]
 };
